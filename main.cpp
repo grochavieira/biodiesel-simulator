@@ -30,6 +30,8 @@ bool secadorEtohAtivo = true;
 bool secadorBiodieselAtivo = false;
 bool tanqueReatorEncheu = false;
 int ciclos = 0;
+bool reatorAtivo = false;
+bool lavagemAtivo = false;
 
 pthread_cond_t condicao[Componentes];
 
@@ -79,7 +81,7 @@ void *threadComponente(void *arg)
 {
   int valorThread = *(int *)arg;
 
-  while (1)
+  while (ciclos <= 3600)
   {
     if (valorThread == 0)
     {
@@ -87,7 +89,8 @@ void *threadComponente(void *arg)
       ciclos++;
       usleep(1000 * 2000);
       cout << "Ciclo " << ciclos << endl;
-      cout << "Biodiesel => " << biodiesel << " | Glicerina => " << glicerina << " | Óleo => " << oleo << " | NaOH => " << naoh << " | EtOh => " << etoh << endl;
+      cout << "Biodiesel => " << biodiesel << " | Glicerina => " << glicerina << " | " << endl
+           << "Óleo => " << oleo << " | NaOH => " << naoh << " | EtOh => " << etoh << endl;
       cout << "***********************************************" << endl;
     }
     if (valorThread == 1)
@@ -178,6 +181,9 @@ void tanqueReator()
   {
     //cout << "Tanque do Reator ENCHEU" << endl;
     tanqueReatorEncheu = true;
+    if (!reatorAtivo)
+      cout << "O REATOR lançou os produtos quimicos para o DECANTADOR." << endl;
+    reatorAtivo = true;
   }
 
   usleep(1000 * 1000);
@@ -215,6 +221,8 @@ void tanqueDecantador()
     lavagemAtiva[0] = true;
     secadorEtohAtivo = true;
     decantadorAtivo = false;
+
+    cout << "O DECANTADOR lançou os produtos quimicos." << endl;
   }
 }
 
@@ -265,6 +273,11 @@ void tanqueLavagem1()
     usleep(1000 * 1000);
     lavagemAtiva[1] = true;
     //cout << "LAVAGEM 1: " << lavagem1 << endl;
+    if (!lavagemAtivo)
+    {
+      cout << "A lavagem de solução ativou" << endl;
+      lavagemAtivo = true;
+    }
   }
 }
 
